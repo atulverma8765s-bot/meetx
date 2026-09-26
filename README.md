@@ -1,3 +1,13 @@
+# MeetX
+
+## 🚀 Live Demo
+
+👉 [Open MeetX Live](https://meetx-seven.vercel.app)
+
+## 📂 GitHub Repository
+
+This repository contains the source code for MeetX, an online meeting application.
+
 # MeetX - Google Meet Clone
 
 MeetX is a modern, real-time video conferencing web application inspired by Google Meet. Built with WebRTC mesh architecture, Node.js, Express, Socket.io, React 18, and Tailwind CSS.
@@ -65,3 +75,4 @@ You can test video calls directly on your computer:
 4. Copy the meeting link or code from the details drawer or URL.
 5. Open an **Incognito Window** or a secondary browser (Chrome / Edge / Firefox) and paste the URL (e.g. `http://localhost:5000/?room=abc-defg-hij`).
 6. Enter a different name and join. Both video feeds will connect immediately via WebRTC!
+
