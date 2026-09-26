@@ -295,3 +295,51 @@ select:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Mobile meeting controls */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  footer {
+    height: 72px;
+    min-height: 72px;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  footer > div {
+    min-width: 0;
+  }
+
+  footer button {
+    flex-shrink: 0;
+  }
+
+  footer .meet-control {
+    width: 42px;
+    height: 42px;
+  }
+
+  footer .group {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  footer {
+    height: 68px;
+    min-height: 68px;
+  }
+
+  footer .meet-control {
+    width: 39px;
+    height: 39px;
+  }
+}

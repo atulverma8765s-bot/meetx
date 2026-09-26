@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { 
   Mic, 
   MicOff, 
@@ -17,7 +17,8 @@ import { getAvatarColor, getInitials } from '../../utils/roomUtils';
 import { useAudioMeter } from '../../hooks/useAudioMeter';
 
 export const LobbyPage = ({ roomId, onJoinCall, onBackHome }) => {
-  const [name, setName] = useState(localStorage.getItem('meetx_user_name') || '');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [mediaStream, setMediaStream] = useState(null);
@@ -153,12 +154,25 @@ export const LobbyPage = ({ roomId, onJoinCall, onBackHome }) => {
   };
 
   const handleJoin = (presentMode = false) => {
-    hasJoinedRef.current = true; // Mark as joined so unmount cleanup does NOT kill the stream!
-    const finalName = name.trim() || 'Guest';
-    localStorage.setItem('meetx_user_name', finalName);
+    const finalName = name.trim();
+    const finalEmail = email.trim();
+
+    if (!finalName) {
+      alert('Please enter your name.');
+      return;
+    }
+
+    if (!finalEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(finalEmail)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    hasJoinedRef.current = true;
+    
 
     onJoinCall({
       name: finalName,
+      email: finalEmail,
       audioEnabled: isAudioEnabled,
       videoEnabled: isVideoEnabled,
       stream: mediaStream,
@@ -362,3 +376,6 @@ export const LobbyPage = ({ roomId, onJoinCall, onBackHome }) => {
     </div>
   );
 };
+
+
+

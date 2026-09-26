@@ -94,7 +94,7 @@ export const ControlBar = ({
       </div>
 
       {/* Center: Main Media Controls */}
-      <div className="flex items-center gap-2.5 sm:gap-3 mx-auto md:mx-0">
+      <div className="flex items-center justify-center gap-1.5 sm:gap-3 mx-auto md:mx-0 max-w-full overflow-x-auto no-scrollbar px-1">
         {/* Microphone Toggle */}
         <div className="relative group">
           <button
@@ -309,5 +309,6 @@ export const ControlBar = ({
     </footer>
   );
 };
+
 
 
