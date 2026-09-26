@@ -33,7 +33,7 @@ export const ControlBar = ({
   onToggleScreenShare,
   onToggleRaiseHand,
   onSendReaction,
-  onToggleDrawer, // 'details' | 'people' | 'chat' | 'whiteboard'
+  onToggleDrawer,
   onOpenSettings,
   onLeaveCall
 }) => {
@@ -42,18 +42,23 @@ export const ControlBar = ({
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Time ticker
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      setCurrentTime(
+        now.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        })
+      );
     };
+
     updateTime();
     const interval = setInterval(updateTime, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
-  // Global hotkeys (Ctrl+D for mic, Ctrl+E for camera)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -62,12 +67,15 @@ export const ControlBar = ({
         e.preventDefault();
         onToggleAudio();
       }
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e') {
         e.preventDefault();
         onToggleVideo();
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
+
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onToggleAudio, onToggleVideo]);
 
@@ -79,71 +87,135 @@ export const ControlBar = ({
       document.exitFullscreen().catch(() => {});
       setIsFullscreen(false);
     }
+
     setShowMoreMenu(false);
   };
 
-  const reactionEmojis = ['\u2764\uFE0F', '\uD83D\uDC4D', '\uD83D\uDC4F', '\uD83C\uDF89', '\uD83D\uDE02', '\uD83D\uDE2E', '\uD83D\uDE22', '\uD83D\uDD25'];
+  const reactionEmojis = [
+    '❤️',
+    '👍',
+    '👏',
+    '🎉',
+    '😂',
+    '😮',
+    '😢',
+    '🔥'
+  ];
+
+  const controlClass = (active = false, danger = false) =>
+    `meet-control w-[38px] h-[38px] sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg flex-shrink-0 ${
+      danger
+        ? 'bg-meet-red hover:bg-meet-redHover text-white'
+        : active
+          ? 'bg-meet-blue text-white'
+          : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
+    }`;
 
   return (
-    <footer className="h-20 bg-[#202124]/95 backdrop-blur-xl px-3 sm:px-4 md:px-6 flex items-center justify-between border-t border-white/[0.06] shrink-0 relative z-40 select-none shadow-[0_-12px_40px_rgba(0,0,0,0.22)]">
+    <footer
+      className="
+        h-16 sm:h-20
+        bg-[#202124]/95 backdrop-blur-xl
+        px-1 sm:px-4 md:px-6
+        flex items-center justify-between
+        border-t border-white/[0.06]
+        shrink-0
+        relative sm:relative
+        z-[100]
+        select-none
+        shadow-[0_-12px_40px_rgba(0,0,0,0.35)]
+        pb-[env(safe-area-inset-bottom)]
+        sm:pb-0
+      "
+    >
       {/* Left: Meeting Time & Code */}
       <div className="hidden md:flex items-center gap-3 text-sm text-[#e8eaed]">
         <span className="font-medium">{currentTime}</span>
         <span className="text-[#5f6368]">|</span>
-        <span className="font-mono text-xs text-[#9aa0a6]">{roomId}</span>
+        <span className="font-mono text-xs text-[#9aa0a6]">
+          {roomId}
+        </span>
       </div>
 
-      {/* Center: Main Media Controls */}
-      <div className="flex items-center justify-center gap-1.5 sm:gap-3 mx-auto md:mx-0 max-w-full overflow-x-auto no-scrollbar px-1">
-        {/* Microphone Toggle */}
-        <div className="relative group">
-          <button
-            onClick={onToggleAudio}
-            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
-              isAudioEnabled
-                ? 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
-                : 'bg-meet-red hover:bg-meet-redHover text-white'
-            }`}
-            title={`Turn ${isAudioEnabled ? 'off' : 'on'} microphone (Ctrl+D)`}
-          >
-            {isAudioEnabled ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
-          </button>
-        </div>
+      {/* Center Controls */}
+      <div
+        className="
+          flex items-center justify-center
+          gap-1 sm:gap-3
+          mx-auto
+          w-full
+          min-w-0
+          overflow-x-auto
+          no-scrollbar
+          px-1
+        "
+      >
+        {/* Microphone */}
+        <button
+          onClick={onToggleAudio}
+          className={controlClass(false, !isAudioEnabled)}
+          title={`Turn ${isAudioEnabled ? 'off' : 'on'} microphone`}
+        >
+          {isAudioEnabled ? (
+            <Mic className="w-4 h-4 sm:w-5 sm:h-5" />
+          ) : (
+            <MicOff className="w-4 h-4 sm:w-5 sm:h-5" />
+          )}
+        </button>
 
-        {/* Camera Toggle */}
-        <div className="relative group">
-          <button
-            onClick={onToggleVideo}
-            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
-              isVideoEnabled
-                ? 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
-                : 'bg-meet-red hover:bg-meet-redHover text-white'
-            }`}
-            title={`Turn ${isVideoEnabled ? 'off' : 'on'} camera (Ctrl+E)`}
-          >
-            {isVideoEnabled ? <VideoIcon className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
-          </button>
-        </div>
+        {/* Camera */}
+        <button
+          onClick={onToggleVideo}
+          className={controlClass(false, !isVideoEnabled)}
+          title={`Turn ${isVideoEnabled ? 'off' : 'on'} camera`}
+        >
+          {isVideoEnabled ? (
+            <VideoIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+          ) : (
+            <VideoOff className="w-4 h-4 sm:w-5 sm:h-5" />
+          )}
+        </button>
 
-        {/* Emoji Reactions Trigger & Popover */}
-        <div className="relative">
+        {/* Reactions */}
+        <div className="relative flex-shrink-0">
           <button
-            onClick={() => setShowReactions(!showReactions)}
-            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
-              showReactions ? 'bg-meet-blue text-white' : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
-            }`}
+            onClick={() => {
+              setShowReactions((value) => !value);
+              setShowMoreMenu(false);
+            }}
+            className={controlClass(showReactions)}
             title="Send a reaction"
           >
-            <Smile className="w-5 h-5" />
+            <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {showReactions && (
             <>
               <div
-                className="fixed inset-0 z-20"
+                className="fixed inset-0 z-[110]"
                 onClick={() => setShowReactions(false)}
               />
-              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-[#28292c]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl px-3 py-2 flex items-center gap-1.5 shadow-2xl z-30 animate-in fade-in zoom-in-95">
+
+              <div
+                className="
+                  fixed
+                  left-1/2
+                  -translate-x-1/2
+                  bottom-[72px]
+                  sm:bottom-24
+                  z-[120]
+                  bg-[#28292c]/98
+                  backdrop-blur-xl
+                  border border-white/[0.10]
+                  rounded-2xl
+                  px-2 sm:px-3
+                  py-2
+                  flex items-center
+                  gap-1
+                  shadow-2xl
+                  animate-in fade-in zoom-in-95
+                "
+              >
                 {reactionEmojis.map((emoji) => (
                   <button
                     key={emoji}
@@ -151,7 +223,17 @@ export const ControlBar = ({
                       onSendReaction(emoji);
                       setShowReactions(false);
                     }}
-                    className="w-9 h-9 rounded-full hover:bg-[#3c4043] text-xl flex items-center justify-center hover:scale-125 transition-transform"
+                    className="
+                      w-9 h-9
+                      sm:w-10 sm:h-10
+                      rounded-full
+                      hover:bg-[#3c4043]
+                      text-xl
+                      flex items-center justify-center
+                      hover:scale-125
+                      active:scale-110
+                      transition-transform
+                    "
                   >
                     {emoji}
                   </button>
@@ -161,81 +243,120 @@ export const ControlBar = ({
           )}
         </div>
 
-        {/* Screen Share Toggle */}
-        <div className="relative group">
-          <button
-            onClick={onToggleScreenShare}
-            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
-              isScreenSharing
-                ? 'bg-meet-blue text-white'
-                : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
-            }`}
-            title={isScreenSharing ? 'Stop presenting' : 'Present now'}
-          >
-            <MonitorUp className="w-5 h-5" />
-          </button>
-        </div>
+        {/* Screen Share */}
+        <button
+          onClick={onToggleScreenShare}
+          className={controlClass(isScreenSharing)}
+          title={isScreenSharing ? 'Stop presenting' : 'Present now'}
+        >
+          <MonitorUp className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
 
-        {/* Raise Hand Toggle */}
-        <div className="relative group">
-          <button
-            onClick={onToggleRaiseHand}
-            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
+        {/* Raise Hand */}
+        <button
+          onClick={onToggleRaiseHand}
+          className={`
+            meet-control
+            w-[38px] h-[38px]
+            sm:w-11 sm:h-11
+            rounded-full
+            flex items-center justify-center
+            transition-all duration-200
+            shadow-md hover:shadow-lg
+            flex-shrink-0
+            ${
               isHandRaised
                 ? 'bg-[#fbbc04] text-[#202124]'
                 : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
-            }`}
-            title={isHandRaised ? 'Lower hand' : 'Raise hand'}
-          >
-            <Hand className="w-5 h-5" />
-          </button>
-        </div>
+            }
+          `}
+          title={isHandRaised ? 'Lower hand' : 'Raise hand'}
+        >
+          <Hand className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
 
-        {/* Collaborative Whiteboard */}
-        <div className="relative group">
-          <button
-            onClick={() => onToggleDrawer('whiteboard')}
-            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
-              activeDrawer === 'whiteboard'
-                ? 'bg-meet-blue text-white'
-                : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
-            }`}
-            title="Open Collaborative Whiteboard"
-          >
-            <PenTool className="w-5 h-5" />
-          </button>
-        </div>
+        {/* Whiteboard */}
+        <button
+          onClick={() => onToggleDrawer('whiteboard')}
+          className={controlClass(activeDrawer === 'whiteboard')}
+          title="Open Collaborative Whiteboard"
+        >
+          <PenTool className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
 
-        {/* More Options Dropdown */}
-        <div className="relative">
+        {/* More */}
+        <div className="relative flex-shrink-0">
           <button
-            onClick={() => setShowMoreMenu(!showMoreMenu)}
-            className="meet-control w-11 h-11 rounded-full bg-[#3c4043] hover:bg-[#4e5256] text-white flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg"
+            onClick={() => {
+              setShowMoreMenu((value) => !value);
+              setShowReactions(false);
+            }}
+            className={controlClass(showMoreMenu)}
             title="More options"
           >
-            <MoreVertical className="w-5 h-5" />
+            <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
           {showMoreMenu && (
             <>
               <div
-                className="fixed inset-0 z-20"
+                className="fixed inset-0 z-[110]"
                 onClick={() => setShowMoreMenu(false)}
               />
-              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 w-52 bg-[#28292c]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl py-2 shadow-2xl z-30 animate-in fade-in zoom-in-95">
+
+              <div
+                className="
+                  fixed
+                  left-1/2
+                  -translate-x-1/2
+                  bottom-[72px]
+                  sm:bottom-24
+                  z-[120]
+                  w-52
+                  bg-[#28292c]/98
+                  backdrop-blur-xl
+                  border border-white/[0.10]
+                  rounded-2xl
+                  py-2
+                  shadow-2xl
+                  animate-in fade-in zoom-in-95
+                "
+              >
                 <button
                   onClick={toggleFullscreen}
-                  className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-[#e8eaed] hover:bg-[#3c4043]"
+                  className="
+                    w-full
+                    px-4 py-3
+                    flex items-center gap-3
+                    text-sm text-[#e8eaed]
+                    hover:bg-[#3c4043]
+                    active:bg-[#4e5256]
+                  "
                 >
-                  {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-                  <span>{isFullscreen ? 'Exit full screen' : 'Full screen'}</span>
+                  {isFullscreen ? (
+                    <Minimize2 className="w-4 h-4" />
+                  ) : (
+                    <Maximize2 className="w-4 h-4" />
+                  )}
+
+                  <span>
+                    {isFullscreen ? 'Exit full screen' : 'Full screen'}
+                  </span>
                 </button>
+
                 <button
                   onClick={() => {
                     setShowMoreMenu(false);
                     onOpenSettings();
                   }}
-                  className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-[#e8eaed] hover:bg-[#3c4043]"
+                  className="
+                    w-full
+                    px-4 py-3
+                    flex items-center gap-3
+                    text-sm text-[#e8eaed]
+                    hover:bg-[#3c4043]
+                    active:bg-[#4e5256]
+                  "
                 >
                   <SettingsIcon className="w-4 h-4" />
                   <span>Settings</span>
@@ -245,21 +366,33 @@ export const ControlBar = ({
           )}
         </div>
 
-        {/* Leave Call (Google Red Pill) */}
-        <div className="relative group ml-1">
-          <button
-            onClick={onLeaveCall}
-            className="h-11 px-5 sm:px-6 rounded-full bg-meet-red hover:bg-meet-redHover text-white flex items-center justify-center gap-2 shadow-lg hover:shadow-[0_8px_24px_rgba(234,67,53,0.30)] transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
-            title="Leave call"
-          >
-            <PhoneOff className="w-5 h-5" />
-          </button>
-        </div>
+        {/* Leave Call */}
+        <button
+          onClick={onLeaveCall}
+          className="
+            h-[38px]
+            sm:h-11
+            w-[44px]
+            sm:w-auto
+            sm:px-6
+            rounded-full
+            bg-meet-red
+            hover:bg-meet-redHover
+            text-white
+            flex items-center justify-center
+            gap-2
+            shadow-lg
+            transition-all duration-200
+            flex-shrink-0
+          "
+          title="Leave call"
+        >
+          <PhoneOff className="w-4 h-4 sm:w-5 sm:h-5" />
+        </button>
       </div>
 
       {/* Right: Drawer Toggles */}
       <div className="hidden sm:flex items-center gap-2">
-        {/* Info / Details Drawer */}
         <button
           onClick={() => onToggleDrawer('details')}
           className={`p-2.5 rounded-full transition-colors ${
@@ -272,7 +405,6 @@ export const ControlBar = ({
           <Info className="w-5 h-5" />
         </button>
 
-        {/* People Drawer */}
         <button
           onClick={() => onToggleDrawer('people')}
           className={`p-2.5 rounded-full relative transition-colors ${
@@ -283,6 +415,7 @@ export const ControlBar = ({
           title="Show everyone"
         >
           <Users className="w-5 h-5" />
+
           {participantCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-[#3c4043] text-white text-[11px] font-bold rounded-full h-5 min-w-[20px] px-1 flex items-center justify-center border border-[#202124]">
               {participantCount}
@@ -290,7 +423,6 @@ export const ControlBar = ({
           )}
         </button>
 
-        {/* Chat Drawer */}
         <button
           onClick={() => onToggleDrawer('chat')}
           className={`p-2.5 rounded-full relative transition-colors ${
@@ -301,6 +433,7 @@ export const ControlBar = ({
           title="Chat with everyone"
         >
           <MessageSquare className="w-5 h-5" />
+
           {unreadChatCount > 0 && activeDrawer !== 'chat' && (
             <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-meet-blue rounded-full ring-2 ring-[#202124]" />
           )}
@@ -309,6 +442,3 @@ export const ControlBar = ({
     </footer>
   );
 };
-
-
-
