@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+﻿import { useEffect, useRef, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { playJoinSound, playLeaveSound, playHandRaiseSound } from '../utils/soundEffects';
 
@@ -129,10 +129,13 @@ export const useWebRTC = (roomId, initialUser, initialStream) => {
   useEffect(() => {
     if (!roomId) return;
 
-    // Use current origin or fallback for local dev
-    const socket = io('/', {
-      transports: ['websocket', 'polling']
-    });
+    // Connect to MeetX signaling server
+const SOCKET_SERVER_URL =
+  import.meta.env.VITE_SOCKET_SERVER_URL || 'http://localhost:5000';
+
+const socket = io(SOCKET_SERVER_URL, {
+  transports: ['websocket', 'polling']
+});
     socketRef.current = socket;
 
     socket.on('connect', () => {
@@ -532,3 +535,5 @@ export const useWebRTC = (roomId, initialUser, initialStream) => {
     leaveCall
   };
 };
+
+
