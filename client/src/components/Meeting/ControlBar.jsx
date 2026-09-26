@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import {
   Mic,
   MicOff,
@@ -82,10 +82,10 @@ export const ControlBar = ({
     setShowMoreMenu(false);
   };
 
-  const reactionEmojis = ['❤️', '👍', '👏', '🎉', '😂', '😮', '😢', '🔥'];
+  const reactionEmojis = ['\u2764\uFE0F', '\uD83D\uDC4D', '\uD83D\uDC4F', '\uD83C\uDF89', '\uD83D\uDE02', '\uD83D\uDE2E', '\uD83D\uDE22', '\uD83D\uDD25'];
 
   return (
-    <footer className="h-20 bg-[#202124] px-4 md:px-6 flex items-center justify-between border-t border-[#3c4043]/30 shrink-0 relative z-40 select-none">
+    <footer className="h-20 bg-[#202124]/95 backdrop-blur-xl px-3 sm:px-4 md:px-6 flex items-center justify-between border-t border-white/[0.06] shrink-0 relative z-40 select-none shadow-[0_-12px_40px_rgba(0,0,0,0.22)]">
       {/* Left: Meeting Time & Code */}
       <div className="hidden md:flex items-center gap-3 text-sm text-[#e8eaed]">
         <span className="font-medium">{currentTime}</span>
@@ -99,7 +99,7 @@ export const ControlBar = ({
         <div className="relative group">
           <button
             onClick={onToggleAudio}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors shadow-md ${
+            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
               isAudioEnabled
                 ? 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
                 : 'bg-meet-red hover:bg-meet-redHover text-white'
@@ -114,7 +114,7 @@ export const ControlBar = ({
         <div className="relative group">
           <button
             onClick={onToggleVideo}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors shadow-md ${
+            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
               isVideoEnabled
                 ? 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
                 : 'bg-meet-red hover:bg-meet-redHover text-white'
@@ -129,7 +129,7 @@ export const ControlBar = ({
         <div className="relative">
           <button
             onClick={() => setShowReactions(!showReactions)}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors shadow-md ${
+            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
               showReactions ? 'bg-meet-blue text-white' : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
             }`}
             title="Send a reaction"
@@ -143,7 +143,7 @@ export const ControlBar = ({
                 className="fixed inset-0 z-20"
                 onClick={() => setShowReactions(false)}
               />
-              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-[#28292c] border border-[#3c4043] rounded-full px-3 py-2 flex items-center gap-1.5 shadow-2xl z-30 animate-in fade-in zoom-in-95">
+              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-[#28292c]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl px-3 py-2 flex items-center gap-1.5 shadow-2xl z-30 animate-in fade-in zoom-in-95">
                 {reactionEmojis.map((emoji) => (
                   <button
                     key={emoji}
@@ -165,7 +165,7 @@ export const ControlBar = ({
         <div className="relative group">
           <button
             onClick={onToggleScreenShare}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors shadow-md ${
+            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
               isScreenSharing
                 ? 'bg-meet-blue text-white'
                 : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
@@ -180,7 +180,7 @@ export const ControlBar = ({
         <div className="relative group">
           <button
             onClick={onToggleRaiseHand}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors shadow-md ${
+            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
               isHandRaised
                 ? 'bg-[#fbbc04] text-[#202124]'
                 : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
@@ -195,7 +195,7 @@ export const ControlBar = ({
         <div className="relative group">
           <button
             onClick={() => onToggleDrawer('whiteboard')}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors shadow-md ${
+            className={`meet-control w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg ${
               activeDrawer === 'whiteboard'
                 ? 'bg-meet-blue text-white'
                 : 'bg-[#3c4043] hover:bg-[#4e5256] text-white'
@@ -210,7 +210,7 @@ export const ControlBar = ({
         <div className="relative">
           <button
             onClick={() => setShowMoreMenu(!showMoreMenu)}
-            className="w-11 h-11 rounded-full bg-[#3c4043] hover:bg-[#4e5256] text-white flex items-center justify-center transition-colors shadow-md"
+            className="meet-control w-11 h-11 rounded-full bg-[#3c4043] hover:bg-[#4e5256] text-white flex items-center justify-center transition-all duration-200 shadow-md hover:shadow-lg"
             title="More options"
           >
             <MoreVertical className="w-5 h-5" />
@@ -222,7 +222,7 @@ export const ControlBar = ({
                 className="fixed inset-0 z-20"
                 onClick={() => setShowMoreMenu(false)}
               />
-              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 w-52 bg-[#28292c] border border-[#3c4043] rounded-xl py-2 shadow-2xl z-30 animate-in fade-in zoom-in-95">
+              <div className="absolute bottom-14 left-1/2 -translate-x-1/2 w-52 bg-[#28292c]/95 backdrop-blur-xl border border-white/[0.08] rounded-2xl py-2 shadow-2xl z-30 animate-in fade-in zoom-in-95">
                 <button
                   onClick={toggleFullscreen}
                   className="w-full px-4 py-2.5 flex items-center gap-3 text-sm text-[#e8eaed] hover:bg-[#3c4043]"
@@ -249,7 +249,7 @@ export const ControlBar = ({
         <div className="relative group ml-1">
           <button
             onClick={onLeaveCall}
-            className="h-11 px-6 rounded-full bg-meet-red hover:bg-meet-redHover text-white flex items-center justify-center gap-2 shadow-lg transition-colors"
+            className="h-11 px-5 sm:px-6 rounded-full bg-meet-red hover:bg-meet-redHover text-white flex items-center justify-center gap-2 shadow-lg hover:shadow-[0_8px_24px_rgba(234,67,53,0.30)] transition-all duration-200 hover:-translate-y-0.5 active:scale-95"
             title="Leave call"
           >
             <PhoneOff className="w-5 h-5" />
@@ -309,3 +309,5 @@ export const ControlBar = ({
     </footer>
   );
 };
+
+
