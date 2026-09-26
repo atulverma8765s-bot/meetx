@@ -330,6 +330,18 @@ export const LobbyPage = ({ roomId, onJoinCall, onBackHome }) => {
               className="w-full px-4 py-3 bg-[#28292c] border border-[#5f6368] focus:border-meet-blue focus:ring-1 focus:ring-meet-blue rounded-xl text-sm text-white placeholder-[#9aa0a6] outline-none transition-all"
             />
           </div>
+{/* Email Input Box */}
+<div className="w-full mb-6">
+  <label className="block text-xs text-[#9aa0a6] mb-2 font-medium">What's your email?</label>
+  <input
+    type="email"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    placeholder="Enter your email"
+    autoComplete="email"
+    className="w-full px-4 py-3 bg-[#28292c] border border-[#5f6368] focus:border-meet-blue focus:ring-1 focus:ring-meet-blue rounded-xl text-sm text-white placeholder-[#9aa0a6] outline-none transition-all"
+  />
+</div>
 
           {/* Join Actions */}
           <div className="w-full flex flex-col sm:flex-row items-center gap-3 mb-6">
@@ -376,6 +388,7 @@ export const LobbyPage = ({ roomId, onJoinCall, onBackHome }) => {
     </div>
   );
 };
+
 
 
 
