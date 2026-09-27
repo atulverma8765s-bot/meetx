@@ -90,9 +90,9 @@ export const MeetingRoom = ({
   return (
     <div className="h-screen w-screen bg-[#202124] text-[#e8eaed] flex flex-col overflow-hidden relative selection:bg-meet-blue selection:text-white">
       {/* Main Video Grid and Side Drawers Area */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 min-h-0 flex overflow-hidden relative">
         {/* Main Stage Video Grid */}
-        <div className="flex-1 h-full min-w-0 relative">
+        <div className="flex-1 min-h-0 h-full min-w-0 relative overflow-hidden">
           <VideoGrid allParticipants={allParticipants} />
 
           {/* Floating Emoji Reactions Layer */}

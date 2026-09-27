@@ -113,20 +113,25 @@ export const ControlBar = ({
 
   return (
     <footer
-      className="
-        h-16 sm:h-20
-        bg-[#202124]/95 backdrop-blur-xl
-        px-1 sm:px-4 md:px-6
-        flex items-center justify-between
-        border-t border-white/[0.06]
-        shrink-0
-        relative sm:relative
-        z-[100]
-        select-none
-        shadow-[0_-12px_40px_rgba(0,0,0,0.35)]
-        pb-[env(safe-area-inset-bottom)]
-        sm:pb-0
-      "
+className="
+  h-[72px]
+  sm:h-20
+  w-full
+  shrink-0
+  bg-[#202124]/95
+  backdrop-blur-xl
+  border-t border-white/[0.06]
+  flex items-center
+  justify-between
+  px-1 sm:px-4 md:px-6
+  z-[100]
+  relative
+  select-none
+  overflow-visible
+  shadow-[0_-12px_40px_rgba(0,0,0,0.35)]
+  box-border
+  pb-[env(safe-area-inset-bottom)]
+"
     >
       {/* Left: Meeting Time & Code */}
       <div className="hidden md:flex items-center gap-3 text-sm text-[#e8eaed]">
@@ -140,15 +145,20 @@ export const ControlBar = ({
       {/* Center Controls */}
       <div
         className="
-          flex items-center justify-center
-          gap-1 sm:gap-3
-          mx-auto
-          w-full
-          min-w-0
-          overflow-x-auto
-          no-scrollbar
-          px-1
-        "
+  flex
+  items-center
+  justify-center
+  gap-1
+  sm:gap-3
+  mx-auto
+  w-full
+  min-w-0
+  h-full
+  overflow-x-auto
+  overflow-y-visible
+  no-scrollbar
+  px-1
+"
       >
         {/* Microphone */}
         <button
