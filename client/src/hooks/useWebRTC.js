@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { io } from 'socket.io-client';
 import { playJoinSound, playLeaveSound, playHandRaiseSound } from '../utils/soundEffects';
 
@@ -390,60 +390,105 @@ const socket = io(SOCKET_SERVER_URL, {
     if (isScreenSharing) {
       // Stop screen sharing and switch back to camera
       if (screenStreamRef.current) {
-        screenStreamRef.current.getTracks().forEach((t) => t.stop());
+        screenStreamRef.current.getTracks().forEach((track) => track.stop());
         screenStreamRef.current = null;
       }
       setScreenStream(null);
       setIsScreenSharing(false);
-
       if (localStreamRef.current) {
         const videoTrack = localStreamRef.current.getVideoTracks()[0];
         peerConnections.current.forEach((pc) => {
-          const sender = pc.getSenders().find((s) => s.track && s.track.kind === 'video');
+          const sender = pc
+            .getSenders()
+            .find((s) => s.track && s.track.kind === 'video');
           if (sender && videoTrack) {
-            sender.replaceTrack(videoTrack);
+            sender.replaceTrack(videoTrack).catch((err) => {
+              console.warn('[ScreenShare] Failed to restore camera:', err);
+            });
           }
         });
       }
-
       if (socketRef.current) {
-        socketRef.current.emit('user:toggle-screen-share', { roomId, isScreenSharing: false });
-      }
-    } else {
-      try {
-        const displayStream = await navigator.mediaDevices.getDisplayMedia({
-          video: { cursor: 'always' },
-          audio: false
+        socketRef.current.emit('user:toggle-screen-share', {
+          roomId,
+          isScreenSharing: false
         });
-        screenStreamRef.current = displayStream;
-        setScreenStream(displayStream);
-        setIsScreenSharing(true);
-
-        const screenVideoTrack = displayStream.getVideoTracks()[0];
-
-        // Replace video track for all peers
+      }
+      return;
+    }
+    // Screen sharing is not supported by every mobile browser.
+    if (
+      typeof navigator === 'undefined' ||
+      !navigator.mediaDevices ||
+      typeof navigator.mediaDevices.getDisplayMedia !== 'function'
+    ) {
+      alert(
+        'Screen sharing is not supported by this browser. Please use a supported browser such as Chrome on Android or a desktop browser.'
+      );
+      return;
+    }
+    try {
+      // Keep the request simple for better browser/mobile compatibility.
+      const displayStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: false
+      });
+      const screenVideoTrack = displayStream.getVideoTracks()[0];
+      if (!screenVideoTrack) {
+        displayStream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+      screenStreamRef.current = displayStream;
+      setScreenStream(displayStream);
+      setIsScreenSharing(true);
+      // Replace camera video with screen video for all connected peers.
+      peerConnections.current.forEach((pc) => {
+        const sender = pc
+          .getSenders()
+          .find((s) => s.track && s.track.kind === 'video');
+        if (sender) {
+          sender.replaceTrack(screenVideoTrack).catch((err) => {
+            console.warn('[ScreenShare] Failed to replace video track:', err);
+          });
+        }
+      });
+      // If the user stops sharing from the browser's native UI,
+      // switch back to the camera.
+      screenVideoTrack.onended = () => {
+        setScreenStream(null);
+        setIsScreenSharing(false);
+        screenStreamRef.current = null;
+        const cameraTrack = localStreamRef.current?.getVideoTracks()[0];
         peerConnections.current.forEach((pc) => {
-          const sender = pc.getSenders().find((s) => s.track && s.track.kind === 'video');
-          if (sender) {
-            sender.replaceTrack(screenVideoTrack);
+          const sender = pc
+            .getSenders()
+            .find((s) => s.track && s.track.kind === 'video');
+          if (sender && cameraTrack) {
+            sender.replaceTrack(cameraTrack).catch((err) => {
+              console.warn('[ScreenShare] Failed to restore camera:', err);
+            });
           }
         });
-
-        // Handle user stopping share via native browser button
-        screenVideoTrack.onended = () => {
-          toggleScreenShare();
-        };
-
         if (socketRef.current) {
-          socketRef.current.emit('user:toggle-screen-share', { roomId, isScreenSharing: true });
+          socketRef.current.emit('user:toggle-screen-share', {
+            roomId,
+            isScreenSharing: false
+          });
         }
-      } catch (err) {
-        console.warn('[ScreenShare] Cancelled or failed:', err);
+      };
+      if (socketRef.current) {
+        socketRef.current.emit('user:toggle-screen-share', {
+          roomId,
+          isScreenSharing: true
+        });
       }
+    } catch (err) {
+      console.warn('[ScreenShare] Cancelled or failed:', err);
+      setScreenStream(null);
+      setIsScreenSharing(false);
+      screenStreamRef.current = null;
     }
-  }, [isScreenSharing, roomId]);
-
-  // Toggle Raise Hand
+  }, [isScreenSharing, roomId]);  // Toggle Raise Hand
   const toggleRaiseHand = useCallback(() => {
     setCurrentUser((prev) => {
       const newState = !prev.isHandRaised;
@@ -535,5 +580,6 @@ const socket = io(SOCKET_SERVER_URL, {
     leaveCall
   };
 };
+
 
 

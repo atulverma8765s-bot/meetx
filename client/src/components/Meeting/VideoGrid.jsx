@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { VideoTile } from './VideoTile';
 
 export const VideoGrid = ({ allParticipants }) => {
@@ -18,9 +18,6 @@ export const VideoGrid = ({ allParticipants }) => {
     ? allParticipants.filter((p) => p.socketId !== pinnedSocketId)
     : allParticipants;
 
-  /*
-   * Pinned / Spotlight
-   */
   if (pinnedParticipant) {
     return (
       <div className="w-full h-full min-h-0 flex flex-col md:flex-row gap-2 sm:gap-3 p-2 sm:p-3 overflow-hidden">
@@ -54,28 +51,7 @@ export const VideoGrid = ({ allParticipants }) => {
     );
   }
 
-  /*
-   * 1-4 participants
-   *
-   * Mobile:
-   * 1 -> one large tile
-   * 2 -> 2 columns
-   * 3/4 -> 2 x 2
-   *
-   * Desktop:
-   * tiles always stay INSIDE available height.
-   */
   if (count <= 4) {
-    let layout = '';
-
-    if (count === 1) {
-      layout = 'grid-cols-1 grid-rows-1';
-    } else if (count === 2) {
-      layout = 'grid-cols-2 grid-rows-1';
-    } else {
-      layout = 'grid-cols-2 grid-rows-2';
-    }
-
     return (
       <div
         className="
@@ -91,16 +67,27 @@ export const VideoGrid = ({ allParticipants }) => {
         "
       >
         <div
-          className={`
+          className="
             w-full
             h-full
             min-h-0
             max-w-[1400px]
             grid
-            ${layout}
             gap-2
             sm:gap-3
-          `}
+          "
+          style={{
+            gridTemplateColumns:
+              count === 1
+                ? 'minmax(0, 1fr)'
+                : 'repeat(2, minmax(0, 1fr))',
+            gridTemplateRows:
+              count === 1
+                ? 'minmax(0, 1fr)'
+                : count === 2
+                  ? 'minmax(0, 1fr)'
+                  : 'repeat(2, minmax(0, 1fr))'
+          }}
         >
           {allParticipants.map((participant) => (
             <div
@@ -126,9 +113,6 @@ export const VideoGrid = ({ allParticipants }) => {
     );
   }
 
-  /*
-   * 5+ participants
-   */
   let gridLayoutClass = '';
 
   if (count <= 6) {
