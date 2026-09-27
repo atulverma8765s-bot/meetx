@@ -52,6 +52,13 @@ export const VideoGrid = ({ allParticipants }) => {
   }
 
   if (count <= 4) {
+    const gridClass =
+      count === 1
+        ? 'grid-cols-1 grid-rows-1'
+        : count === 2
+          ? 'grid-cols-1 grid-rows-2 sm:grid-cols-2 sm:grid-rows-1'
+          : 'grid-cols-2 grid-rows-2';
+
     return (
       <div
         className="
@@ -67,27 +74,16 @@ export const VideoGrid = ({ allParticipants }) => {
         "
       >
         <div
-          className="
+          className={`
             w-full
             h-full
             min-h-0
             max-w-[1400px]
             grid
+            ${gridClass}
             gap-2
             sm:gap-3
-          "
-          style={{
-            gridTemplateColumns:
-              count === 1
-                ? 'minmax(0, 1fr)'
-                : 'repeat(2, minmax(0, 1fr))',
-            gridTemplateRows:
-              count === 1
-                ? 'minmax(0, 1fr)'
-                : count === 2
-                  ? 'minmax(0, 1fr)'
-                  : 'repeat(2, minmax(0, 1fr))'
-          }}
+          `}
         >
           {allParticipants.map((participant) => (
             <div
