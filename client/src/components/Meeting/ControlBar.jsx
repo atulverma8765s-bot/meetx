@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Mic,
   MicOff,
@@ -92,14 +93,14 @@ export const ControlBar = ({
   };
 
   const reactionEmojis = [
-    '❤️',
-    '👍',
-    '👏',
-    '🎉',
-    '😂',
-    '😮',
-    '😢',
-    '🔥'
+    '\u{1F44D}',
+    '\u{2764}\u{FE0F}',
+    '\u{1F602}',
+    '\u{1F389}',
+    '\u{1F525}',
+    '\u{1F62E}',
+    '\u{1F44F}',
+    '\u{1F60D}'
   ];
 
   const controlClass = (active = false, danger = false) =>
@@ -122,6 +123,8 @@ className="
   backdrop-blur-xl
   border-t border-white/[0.06]
   flex items-center justify-between
+  overflow-x-auto
+  no-scrollbar
   px-1 sm:px-4 md:px-6
   z-[100]
   fixed sm:relative
@@ -153,10 +156,12 @@ className="
   gap-1
   sm:gap-3
   mx-auto
-  w-full
+  w-max
+  flex-none
   min-w-0
   h-full
-  overflow-x-auto
+  sm:flex-1
+  overflow-visible
   overflow-y-visible
   no-scrollbar
   px-1
@@ -191,6 +196,7 @@ className="
         {/* Reactions */}
         <div className="relative flex-shrink-0">
           <button
+            type="button"
             onClick={() => {
               setShowReactions((value) => !value);
               setShowMoreMenu(false);
@@ -201,7 +207,7 @@ className="
             <Smile className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {showReactions && (
+          {showReactions && createPortal((
             <>
               <div
                 className="fixed inset-0 z-[110]"
@@ -213,9 +219,9 @@ className="
                   fixed
                   left-1/2
                   -translate-x-1/2
-                  bottom-[72px]
+                  bottom-[82px]
                   sm:bottom-24
-                  z-[120]
+                  z-[9999]
                   bg-[#28292c]/98
                   backdrop-blur-xl
                   border border-white/[0.10]
@@ -251,8 +257,7 @@ className="
                   </button>
                 ))}
               </div>
-            </>
-          )}
+            </>), document.body)}
         </div>
 
         {/* Screen Share */}
@@ -299,6 +304,7 @@ className="
         {/* More */}
         <div className="relative flex-shrink-0">
           <button
+            type="button"
             onClick={() => {
               setShowMoreMenu((value) => !value);
               setShowReactions(false);
@@ -309,7 +315,7 @@ className="
             <MoreVertical className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
 
-          {showMoreMenu && (
+          {showMoreMenu && createPortal((
             <>
               <div
                 className="fixed inset-0 z-[110]"
@@ -321,9 +327,9 @@ className="
                   fixed
                   left-1/2
                   -translate-x-1/2
-                  bottom-[72px]
+                  bottom-[82px]
                   sm:bottom-24
-                  z-[120]
+                  z-[9999]
                   w-52
                   bg-[#28292c]/98
                   backdrop-blur-xl
@@ -357,8 +363,9 @@ className="
                 </button>
 
                 <button
-                  onClick={() => {
-                    setShowMoreMenu(false);
+                  type="button"
+            onClick={() => {
+              setShowMoreMenu(false);
                     onOpenSettings();
                   }}
                   className="
@@ -374,8 +381,7 @@ className="
                   <span>Settings</span>
                 </button>
               </div>
-            </>
-          )}
+            </>), document.body)}
         </div>
 
         {/* Leave Call */}
@@ -396,6 +402,8 @@ className="
             shadow-lg
             transition-all duration-200
             flex-shrink-0
+            sticky right-0
+            z-10
           "
           title="Leave call"
         >
@@ -404,7 +412,7 @@ className="
       </div>
 
       {/* Right: Drawer Toggles */}
-      <div className="hidden sm:flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         <button
           onClick={() => onToggleDrawer('details')}
           className={`p-2.5 rounded-full transition-colors ${
@@ -454,3 +462,19 @@ className="
     </footer>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

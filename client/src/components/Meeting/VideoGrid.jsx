@@ -56,7 +56,7 @@ export const VideoGrid = ({ allParticipants }) => {
       count === 1
         ? 'grid-cols-1 grid-rows-1'
         : count === 2
-          ? 'grid-cols-1 grid-rows-2 sm:grid-cols-2 sm:grid-rows-1'
+          ? 'grid-cols-1 grid-rows-[repeat(2,minmax(0,1fr))] sm:grid-cols-2 sm:grid-rows-1'
           : 'grid-cols-2 grid-rows-2';
 
     return (
@@ -170,3 +170,4 @@ export const VideoGrid = ({ allParticipants }) => {
     </div>
   );
 };
+
