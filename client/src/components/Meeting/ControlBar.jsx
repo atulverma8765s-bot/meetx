@@ -121,11 +121,13 @@ className="
   bg-[#202124]/95
   backdrop-blur-xl
   border-t border-white/[0.06]
-  flex items-center
-  justify-between
+  flex items-center justify-between
   px-1 sm:px-4 md:px-6
   z-[100]
-  relative
+  fixed sm:relative
+  bottom-0
+  left-0
+  right-0
   select-none
   overflow-visible
   shadow-[0_-12px_40px_rgba(0,0,0,0.35)]

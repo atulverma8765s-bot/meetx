@@ -19,12 +19,11 @@ export const VideoGrid = ({ allParticipants }) => {
     : allParticipants;
 
   /*
-   * Pinned / Spotlight layout
+   * Pinned / Spotlight
    */
   if (pinnedParticipant) {
     return (
       <div className="w-full h-full min-h-0 flex flex-col md:flex-row gap-2 sm:gap-3 p-2 sm:p-3 overflow-hidden">
-        {/* Main Spotlight */}
         <div className="flex-1 min-h-0 min-w-0">
           <VideoTile
             participant={pinnedParticipant}
@@ -34,7 +33,6 @@ export const VideoGrid = ({ allParticipants }) => {
           />
         </div>
 
-        {/* Filmstrip */}
         {unpinnedParticipants.length > 0 && (
           <div className="w-full md:w-64 h-28 sm:h-40 md:h-full flex md:flex-col gap-2 sm:gap-3 overflow-x-auto md:overflow-y-auto md:overflow-x-hidden shrink-0">
             {unpinnedParticipants.map((participant) => (
@@ -57,25 +55,36 @@ export const VideoGrid = ({ allParticipants }) => {
   }
 
   /*
-   * MOBILE
+   * 1-4 participants
    *
-   * Important:
-   * Do NOT stretch the tiles to the complete phone height.
+   * Mobile:
+   * 1 -> one large tile
+   * 2 -> 2 columns
+   * 3/4 -> 2 x 2
    *
-   * 1 participant  -> large centered tile
-   * 2 participants -> 2 square tiles
-   * 3-4            -> 2 x 2 square tiles
+   * Desktop:
+   * tiles always stay INSIDE available height.
    */
   if (count <= 4) {
+    let layout = '';
+
+    if (count === 1) {
+      layout = 'grid-cols-1 grid-rows-1';
+    } else if (count === 2) {
+      layout = 'grid-cols-2 grid-rows-1';
+    } else {
+      layout = 'grid-cols-2 grid-rows-2';
+    }
+
     return (
       <div
         className="
           w-full
           h-full
           min-h-0
-          overflow-hidden
           p-2
           sm:p-3
+          overflow-hidden
           flex
           items-center
           justify-center
@@ -84,31 +93,25 @@ export const VideoGrid = ({ allParticipants }) => {
         <div
           className={`
             w-full
-            max-w-5xl
+            h-full
+            min-h-0
+            max-w-[1400px]
             grid
+            ${layout}
             gap-2
             sm:gap-3
-            justify-items-center
-            ${
-              count === 1
-                ? 'grid-cols-1'
-                : 'grid-cols-2'
-            }
           `}
         >
           {allParticipants.map((participant) => (
             <div
               key={participant.socketId}
-              className={`
-                min-w-0
-                min-h-0
+              className="
                 w-full
-                ${
-                  count === 1
-                    ? 'aspect-video max-h-[calc(100vh-150px)]'
-                    : 'aspect-square'
-                }
-              `}
+                h-full
+                min-h-0
+                min-w-0
+                overflow-hidden
+              "
             >
               <VideoTile
                 participant={participant}
@@ -124,7 +127,7 @@ export const VideoGrid = ({ allParticipants }) => {
   }
 
   /*
-   * Larger participant counts
+   * 5+ participants
    */
   let gridLayoutClass = '';
 
@@ -162,8 +165,6 @@ export const VideoGrid = ({ allParticipants }) => {
           ${gridLayoutClass}
           gap-2
           sm:gap-3
-          items-stretch
-          justify-items-stretch
         `}
       >
         {allParticipants.map((participant) => (
