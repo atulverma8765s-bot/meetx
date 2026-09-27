@@ -5,9 +5,7 @@ export const VideoGrid = ({ allParticipants }) => {
   const [pinnedSocketId, setPinnedSocketId] = useState(null);
 
   const togglePin = (socketId) => {
-    setPinnedSocketId((prev) =>
-      prev === socketId ? null : socketId
-    );
+    setPinnedSocketId((prev) => (prev === socketId ? null : socketId));
   };
 
   const count = allParticipants.length;
@@ -20,7 +18,6 @@ export const VideoGrid = ({ allParticipants }) => {
     ? allParticipants.filter((p) => p.socketId !== pinnedSocketId)
     : allParticipants;
 
-  // Pinned participant layout
   if (pinnedParticipant) {
     return (
       <div className="w-full h-full min-h-0 flex flex-col md:flex-row gap-2 sm:gap-3 p-2 sm:p-3 overflow-hidden">
@@ -54,7 +51,6 @@ export const VideoGrid = ({ allParticipants }) => {
     );
   }
 
-  // 1-4 participants
   if (count <= 4) {
     return (
       <div
@@ -81,12 +77,15 @@ export const VideoGrid = ({ allParticipants }) => {
             sm:gap-3
           "
           style={{
-            gridTemplateColumns: 'minmax(0, 1fr)',
+            gridTemplateColumns:
+              count === 1
+                ? 'minmax(0, 1fr)'
+                : 'repeat(2, minmax(0, 1fr))',
             gridTemplateRows:
               count === 1
                 ? 'minmax(0, 1fr)'
                 : count === 2
-                  ? 'repeat(2, minmax(0, 1fr))'
+                  ? 'minmax(0, 1fr)'
                   : 'repeat(2, minmax(0, 1fr))'
           }}
         >
@@ -114,7 +113,6 @@ export const VideoGrid = ({ allParticipants }) => {
     );
   }
 
-  // More than 4 participants
   let gridLayoutClass = '';
 
   if (count <= 6) {
