@@ -57,30 +57,86 @@ export const VideoGrid = ({ allParticipants }) => {
   }
 
   /*
-   * Responsive grid
+   * MOBILE
    *
-   * Mobile:
-   * 1 participant -> 1 column
-   * 2 participants -> 2 columns
-   * 3-4 participants -> 2 x 2
+   * Important:
+   * Do NOT stretch the tiles to the complete phone height.
    *
-   * Desktop:
-   * automatically expands for more participants.
+   * 1 participant  -> large centered tile
+   * 2 participants -> 2 square tiles
+   * 3-4            -> 2 x 2 square tiles
+   */
+  if (count <= 4) {
+    return (
+      <div
+        className="
+          w-full
+          h-full
+          min-h-0
+          overflow-hidden
+          p-2
+          sm:p-3
+          flex
+          items-center
+          justify-center
+        "
+      >
+        <div
+          className={`
+            w-full
+            max-w-5xl
+            grid
+            gap-2
+            sm:gap-3
+            justify-items-center
+            ${
+              count === 1
+                ? 'grid-cols-1'
+                : 'grid-cols-2'
+            }
+          `}
+        >
+          {allParticipants.map((participant) => (
+            <div
+              key={participant.socketId}
+              className={`
+                min-w-0
+                min-h-0
+                w-full
+                ${
+                  count === 1
+                    ? 'aspect-video max-h-[calc(100vh-150px)]'
+                    : 'aspect-square'
+                }
+              `}
+            >
+              <VideoTile
+                participant={participant}
+                isPinned={false}
+                onTogglePin={() => togglePin(participant.socketId)}
+                isSingleParticipant={count === 1}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  /*
+   * Larger participant counts
    */
   let gridLayoutClass = '';
 
-  if (count <= 1) {
-    gridLayoutClass = 'grid-cols-1 grid-rows-1';
-  } else if (count === 2) {
-    gridLayoutClass = 'grid-cols-2 grid-rows-1';
-  } else if (count <= 4) {
-    gridLayoutClass = 'grid-cols-2 grid-rows-2';
-  } else if (count <= 6) {
-    gridLayoutClass = 'grid-cols-2 sm:grid-cols-3 grid-rows-3 sm:grid-rows-2';
+  if (count <= 6) {
+    gridLayoutClass =
+      'grid-cols-2 sm:grid-cols-3 grid-rows-3 sm:grid-rows-2';
   } else if (count <= 9) {
-    gridLayoutClass = 'grid-cols-2 sm:grid-cols-3 grid-rows-5 sm:grid-rows-3';
+    gridLayoutClass =
+      'grid-cols-2 sm:grid-cols-3 grid-rows-5 sm:grid-rows-3';
   } else {
-    gridLayoutClass = 'grid-cols-2 sm:grid-cols-4 grid-rows-6 sm:grid-rows-3';
+    gridLayoutClass =
+      'grid-cols-2 sm:grid-cols-4 grid-rows-6 sm:grid-rows-3';
   }
 
   return (
@@ -125,7 +181,7 @@ export const VideoGrid = ({ allParticipants }) => {
               participant={participant}
               isPinned={false}
               onTogglePin={() => togglePin(participant.socketId)}
-              isSingleParticipant={count === 1}
+              isSingleParticipant={false}
             />
           </div>
         ))}
